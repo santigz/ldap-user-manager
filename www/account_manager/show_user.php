@@ -104,6 +104,25 @@ if ($ldap_search) {
   }
   $dn = $user[0]['dn'];
 
+  if ($SHOW_POSIX_ATTRIBUTES == TRUE) {
+    if (isset($user[0]['gidnumber']) && $user[0]['gidnumber']['count'] == 1) {
+      $user_group = ldap_get_group_name_from_gid($ldap_connection, $user[0]['gidnumber'][0]);
+    }
+    $groups_data = [];
+    $group_names = ldap_get_group_list($ldap_connection);
+    if (isset($user_group) && $user_group != FALSE && in_array($user_group, $group_names)) {
+      $group_names = array_merge([$user_group], array_diff($group_names, [$user_group]));
+    }
+    foreach ($group_names as $group){
+      $gid = ldap_get_gid_of_group($ldap_connection, $group);
+      if (is_numeric($gid)) {
+        $groups_data[$group] = $gid;
+      }
+    }
+    $attribute_map['gidnumber']['dropdown'] = $groups_data;
+    $attribute_map['gidnumber']['dropdown_onclick'] = "update_gidnumber_dropdown(this);";
+  }
+
  }
  else {
    ?>
@@ -270,6 +289,8 @@ if ($ldap_search) {
 
 ################
 
+render_js_gidnumber_generator('gidnumber');
+render_js_dropdown_generator('gidnumber');
 
 ?>
 <script src="<?php print $SERVER_PATH; ?>js/zxcvbn.min.js"></script>
@@ -462,7 +483,9 @@ if ($ldap_search) {
           if (isset($attr_r['inputtype'])) { $inputtype = $attr_r['inputtype']; } else { $inputtype = ""; }
           if ($attribute == $LDAP['account_attribute']) { $label = "<strong>$label</strong><sup>&ast;</sup>"; }
           if (isset($$attribute)) { $these_values=$$attribute; } else { $these_values = array(); }
-          render_attribute_fields($attribute,$label,$these_values,$dn,$onkeyup,$inputtype);
+          if (isset($attr_r['dropdown'])) { $dropdown = $attr_r['dropdown']; } else { $dropdown = []; }
+          if (isset($attr_r['dropdown_onclick'])) { $dropdown_onclick = $attr_r['dropdown_onclick']; } else { $dropdown_onclick = ""; }
+          render_attribute_fields($attribute,$label,$these_values,$dn,$onkeyup,$inputtype,"",$dropdown,$dropdown_onclick);
         }
       ?>
 

@@ -65,7 +65,6 @@ if ($SHOW_POSIX_ATTRIBUTES == TRUE) {
     $gid = ldap_get_gid_of_group($ldap_connection, $group);
     if (is_numeric($gid)) {
       $groups_data[$group] = $gid;
-      error_log('DEBUG_GROUP: '.$group.' '.$gid);
     }
   }
   if (!empty($groups_data)) {
@@ -73,7 +72,6 @@ if ($SHOW_POSIX_ATTRIBUTES == TRUE) {
   }
   $attribute_map['gidnumber']['dropdown'] = $groups_data;
   $attribute_map['gidnumber']['dropdown_onclick'] = "update_gidnumber_dropdown(this);";
-  // ldap_close($ldap_connection);
 }
 
 foreach ($attribute_map as $attribute => $attr_r) {
