@@ -128,7 +128,7 @@ foreach ($attribute_map as $attribute => $attr_r) {
 }
 
 if (!isset($gidnumber[0]) or !is_numeric($gidnumber[0])) {
-  $gidnumber[0]=ldap_get_highest_id($ldap_connection,$type="gid");
+  $gidnumber[0]=ldap_get_highest_id($ldap_connection,$type="gid") + 1;
   $gidnumber['count']=1;
 }
 

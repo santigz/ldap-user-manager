@@ -603,11 +603,16 @@ function ldap_new_group($ldap_connection,$group_name,$initial_member="",$extra_a
 
      $new_group_array = array_merge($new_group_array,$extra_attributes);
 
+     $highest_gid = ldap_get_highest_id($ldap_connection,'gid');
      if (!isset($new_group_array["gidnumber"][0]) or !is_numeric($new_group_array["gidnumber"][0])) {
-       $highest_gid = ldap_get_highest_id($ldap_connection,'gid');
        $new_gid = $highest_gid + 1;
        $new_group_array["gidnumber"] = $new_gid;
        $update_gid_store=TRUE;
+     } else {
+       if ($new_group_array["gidnumber"][0] > $highest_gid) {
+         $new_gid = $new_group_array["gidnumber"][0];
+         $update_gid_store=TRUE;
+       }
      }
 
      $group_dn="cn=$new_group,{$LDAP['group_dn']}";
