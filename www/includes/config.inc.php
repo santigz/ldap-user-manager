@@ -63,7 +63,7 @@
  }
  else {
    $LDAP['default_attribute_map']["uidnumber"]  = array("label" => "UID");
-   $LDAP['default_attribute_map']["gidnumber"]  = array("label" => "GID");
+   $LDAP['default_attribute_map']["gidnumber"]  = array("label" => "GID", "onkeyup" => "update_gidnumber();");
    $LDAP['default_attribute_map']["homedirectory"]  = array("label" => "Home directory", "onkeyup" => "auto_homedir_update = false;");
    $LDAP['default_attribute_map']["loginshell"]  = array("label" => "Shell", "default" => $DEFAULT_USER_SHELL);
    $LDAP['default_group_attribute_map']["gidnumber"] = array("label" => "Group ID number");

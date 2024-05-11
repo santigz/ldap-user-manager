@@ -595,6 +595,59 @@ EoRenderHomedirJS;
 
 ######################################################
 
+function render_js_gidnumber_generator($field_id) {
+
+  $dropdown_field_id = $field_id . '-dropdown';
+
+  print <<<EoRenderGidselectorJS
+<script>
+
+ var auto_dropdown_update = true;
+
+ function update_gidnumber(element) {
+
+
+  if ( auto_dropdown_update == true ) {
+    var field_dropdown = document.getElementById('$dropdown_field_id');
+    field_dropdown.innerHTML = '-----&nbsp;&nbsp;' + ' <span class="caret"></span>';
+  }
+
+ }
+</script>
+
+EoRenderGidselectorJS;
+
+}
+
+######################################################
+
+function render_js_dropdown_generator($field_id) {
+
+  $dropdown_field_id = $field_id . '-dropdown';
+
+  print <<<EoRenderGidselectorJS
+<script>
+
+ var auto_dropdown_update = true;
+
+ function update_{$field_id}_dropdown(element) {
+
+  var field_dropdown = document.getElementById('$dropdown_field_id');
+  field_dropdown.innerHTML = element.innerHTML + ' <span class="caret"></span>';
+  if ( auto_dropdown_update == true ) {
+    var value = element.getAttribute('value');
+    document.getElementById('$field_id').value = value;
+  }
+
+ }
+</script>
+
+EoRenderGidselectorJS;
+
+}
+
+######################################################
+
 function render_dynamic_field_js() {
 
 ?>
@@ -644,7 +697,7 @@ function render_dynamic_field_js() {
 
 ######################################################
 
-function render_attribute_fields($attribute,$label,$values_r,$resource_identifier,$onkeyup="",$inputtype="",$tabindex=null) {
+function render_attribute_fields($attribute,$label,$values_r,$resource_identifier,$onkeyup="",$inputtype="",$tabindex=null,$dropdown=[],$dropdown_onclick="") {
 
   global $THIS_MODULE_PATH;
 
@@ -705,7 +758,25 @@ function render_attribute_fields($attribute,$label,$values_r,$resource_identifie
             }
             ?>
        </div>
-
+      <?php
+        if (!empty($dropdown)) { ?>
+          <div class="col-sm-1 dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="<?php print $attribute; ?>-dropdown" data-toggle="dropdown">
+              <?php print key($dropdown); ?>
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu"> 
+            <?php
+              foreach($dropdown as $key => $value) { ?>
+                <li><a href="#" class="dropdown-item" value="<?php print $value; ?>" <?php if ($dropdown_onclick != "") { print "onclick=\"$dropdown_onclick\""; } ?>><?php print $key; ?></a></li>
+              <?php
+              }
+              ?>
+            </ul>
+          </div>
+        <?php
+        }
+      ?>
      </div>
 
   <?php
